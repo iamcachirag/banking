@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jaiswal Banking Ltd</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff, #00d4ff);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            letter-spacing: 1.5px;
+        }
+
+        .form-section {
+            padding: 25px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #007bff, #00d4ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #0056b3, #00aaff);
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        #transactions table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #transactions th, #transactions td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #transactions th {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .option-bar {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .option-bar button {
+            background: linear-gradient(135deg, #74ebd5, #007bff);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        .option-bar button:hover {
+            background: linear-gradient(135deg, #00aaff, #0056b3);
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-group input {
+                padding: 10px;
+            }
+
+            .btn {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .header h1 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Jaiswal Banking Ltd</h1>
+        </div>
+
+        <div id="createAccount" class="form-section">
+            <h3>Create Account</h3>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number</label>
+                <input type="text" id="mobile" placeholder="Enter your mobile number">
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" placeholder="Enter your address">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password">
+            </div>
+            <button class="btn" onclick="createAccount()">Create Account</button>
+            <div class="link">
+                <a href="#" onclick="showLogin()">Already have an account? Login</a>
+            </div>
+        </div>
+
+        <div id="login" class="form-section" style="display: none;">
+            <h3>Login</h3>
+            <div class="form-group">
+                <label for="accountNumber">Account Number</label>
+                <input type="text" id="accountNumber" placeholder="Enter account number">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="login()">Login</button>
+            <div class="link">
+                <a href="#" onclick="showCreateAccount()">Don't have an account? Create Account</a>
+            </div>
+        </div>
+
+        <div id="userInfo" class="form-section" style="display: none;">
+            <h3>Account Details</h3>
+            <p><strong>Account Number:</strong> <span id="infoAccountNumber"></span></p>
+            <p><strong>Name:</strong> <span id="infoName"></span></p>
+            <p><strong>Mobile:</strong> <span id="infoMobile"></span></p>
+            <p><strong>Address:</strong> <span id="infoAddress"></span></p>
+            <div class="option-bar">
+                <button onclick="performTransaction('deposit')">Deposit</button>
+                <button onclick="performTransaction('withdraw')">Withdraw</button>
+                <button onclick="performTransaction('loan')">Loan</button>
+                <button onclick="showPassbook()">View Passbook</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="transactions" class="form-section" style="display: none;">
+            <h3>Passbook</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTable"></tbody>
+            </table>
+            <button class="btn" onclick="hidePassbook()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        // Functions to switch between Create Account and Login views
+function showCreateAccount() {
+    document.getElementById('createAccount').style.display = 'block';
+    document.getElementById('login').style.display = 'none';
+}
+
+function showLogin() {
+    document.getElementById('createAccount').style.display = 'none';
+    document.getElementById('login').style.display = 'block';
+}
+
+// Function to create a new account
+function createAccount() {
+    const name = document.getElementById('name').value;
+    const mobile = document.getElementById('mobile').value;
+    const address = document.getElementById('address').value;
+    const password = document.getElementById('password').value;
+
+    if (name && mobile && address && password) {
+        const accountNumber = 'AC' + Math.floor(100000 + Math.random() * 900000);
+        const accountData = {
+            name,
+            mobile,
+            address,
+            password,
+            balance: 0,
+            transactions: []
+        };
+
+        localStorage.setItem(accountNumber, JSON.stringify(accountData));
+        alert(`Account created successfully! Your Account Number is ${accountNumber}`);
+        showLogin();
+    } else {
+        alert('Please fill in all the fields.');
+    }
+}
+
+// Function to handle login
+function login() {
+    const accountNumber = document.getElementById('accountNumber').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const accountData = JSON.parse(localStorage.getItem(accountNumber));
+    if (accountData && accountData.password === password) {
+        document.getElementById('infoAccountNumber').innerText = accountNumber;
+        document.getElementById('infoName').innerText = accountData.name;
+        document.getElementById('infoMobile').innerText = accountData.mobile;
+        document.getElementById('infoAddress').innerText = accountData.address;
+
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+    } else {
+        alert('Invalid Account Number or Password.');
+    }
+}
+
+// Function to log out
+function logout() {
+    document.getElementById('userInfo').style.display = 'none';
+    showLogin();
+}
+
+// Function to perform transactions
+function performTransaction(type) {
+    const accountNumber = document.getElementById('infoAccountNumber').innerText;
+    const amount = parseFloat(prompt(`Enter the amount to ${type}:`));
+
+    if (amount > 0) {
+        const accountData = JSON.parse(localStorage.getItem(accountNumber));
+
+        if (type === 'withdraw' && accountData.balance < amount) {
+            alert('Insufficient balance!');
+            return;
+        }
+
+        const date = new Date().toLocaleString();
+        let newBalance = accountData.balance;
+
+        if (type === 'deposit') {
+            newBalance += amount;
+        } else if (type === 'withdraw') {
+            newBalance -= amount;
+        } else if (type === 'loan') {
+            newBalance += amount; // Loans increase balance
+        }
+
+        accountData.balance = newBalance;
+        accountData.transactions.push({ date, type, amount, balance: newBalance });
+        localStorage.setItem(accountNumber, JSON.stringify(accountData));
+        alert(`${type.charAt(0).toUpperCase() + type.slice(1)} successful! New Balance: ₹${newBalance}`);
+    } else {
+        alert('Enter a valid amount.');
+    }
+}
+
+// Function to display the passbook
+function showPassbook() {
+    const accountNumber = document.getElementById('infoAccountNumber').innerText;
+    const accountData = JSON.parse(localStorage.getItem(accountNumber));
+
+    const transactionTable = document.getElementById('transactionTable');
+    transactionTable.innerHTML = ''; // Clear previous data
+
+    accountData.transactions.forEach(transaction => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${transaction.date}</td>
+            <td>${transaction.type}</td>
+            <td>₹${transaction.amount}</td>
+            <td>₹${transaction.balance}</td>
+        `;
+        transactionTable.appendChild(row);
+    });
+
+    document.getElementById('userInfo').style.display = 'none';
+    document.getElementById('transactions').style.display = 'block';
+}
+
+// Function to hide the passbook
+function hidePassbook() {
+    document.getElementById('transactions').style.display = 'none';
+    document.getElementById('userInfo').style.display = 'block';
+}
+
+    </script>
+</body>
+</html>

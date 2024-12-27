@@ -1,368 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jaiswal Banking Ltd</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intraday Candlestick Chart - Marketism</title>
+  <style>
+   body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  text-align: center;
+}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #74ebd5, #acb6e5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+h1 {
+  color: #2e3b4e;
+  margin-top: 20px;
+  font-size: 32px; /* Adjusted font size */
+  text-transform: uppercase;
+}
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
+h2 {
+  color: #555;
+  font-size: 20px; /* Adjusted font size */
+  margin-bottom: 15px; /* Reduced margin */
+}
 
-        .header {
-            background: linear-gradient(135deg, #007bff, #00d4ff);
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
+.container {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1200px;
+  padding: 20px; /* Reduced padding for better mobile layout */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .header h1 {
-            font-size: 1.8em;
-            letter-spacing: 1.5px;
-        }
+.details {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-        .form-section {
-            padding: 25px;
-        }
+.profit {
+  color: green;
+}
 
-        h3 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #007bff;
-        }
+.loss {
+  color: red;
+}
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+.buttons {
+  margin-top: 20px; /* Reduced margin */
+  text-align: center;
+}
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
+.button {
+  padding: 12px 24px; /* Adjusted padding */
+  font-size: 14px; /* Adjusted font size */
+  margin: 5px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-        }
+.buy {
+  background-color: #4CAF50;
+}
 
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #007bff, #00d4ff);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
+.buy:hover {
+  background-color: #45a049;
+}
 
-        .btn:hover {
-            background: linear-gradient(135deg, #0056b3, #00aaff);
-        }
+.sell {
+  background-color: #f44336;
+}
 
-        .link {
-            text-align: center;
-            margin-top: 20px;
-        }
+.sell:hover {
+  background-color: #e53935;
+}
 
-        .link a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 0.9em;
-        }
+.chart-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px; /* Reduced margin */
+  position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 0; /* Reduced padding */
+  border-radius: 10px;
+}
 
-        .link a:hover {
-            text-decoration: underline;
-        }
+canvas {
+  display: block;
+  background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+}
 
-        #transactions table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+.footer {
+  font-size: 14px;
+  color: #888;
+  margin-top: 30px; /* Reduced margin */
+}
 
-        #transactions th, #transactions td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
+.candle-info {
+  font-size: 16px;
+  margin-top: 10px;
+  text-align: center;
+}
 
-        #transactions th {
-            background-color: #f8f9fa;
-            color: #333;
-        }
+.candle-info span {
+  margin-right: 10px; /* Reduced margin */
+}
 
-        .option-bar {
-            text-align: center;
-            margin: 20px 0;
-        }
+@media (max-width: 768px) {
+  h1 {
+    font-size: 28px; /* Adjusted font size */
+  }
 
-        .option-bar button {
-            background: linear-gradient(135deg, #74ebd5, #007bff);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            font-size: 0.9em;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 5px;
-            transition: 0.3s;
-        }
+  h2 {
+    font-size: 18px; /* Adjusted font size */
+  }
 
-        .option-bar button:hover {
-            background: linear-gradient(135deg, #00aaff, #0056b3);
-        }
+  .details {
+    font-size: 16px;
+  }
 
-        @media (max-width: 500px) {
-            .container {
-                padding: 15px;
-            }
+  .button {
+    font-size: 14px; /* Adjusted font size */
+    padding: 10px 20px; /* Reduced padding */
+  }
 
-            .form-group input {
-                padding: 10px;
-            }
+  .chart-container {
+    padding: 5px 0; /* Further reduced padding */
+  }
 
-            .btn {
-                padding: 10px;
-                font-size: 0.9em;
-            }
+  .candle-info {
+    font-size: 14px;
+  }
 
-            .header h1 {
-                font-size: 1.4em;
-            }
-        }
-    </style>
+  .footer {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px; /* Adjusted font size */
+  }
+
+  h2 {
+    font-size: 16px; /* Adjusted font size */
+  }
+
+  .details {
+    font-size: 14px;
+  }
+
+  .button {
+    font-size: 12px; /* Adjusted font size */
+    padding: 10px 20px; /* Further reduced padding */
+  }
+
+  .chart-container {
+    padding: 0; /* Removed extra padding */
+  }
+
+  .candle-info {
+    font-size: 12px;
+    display: block;
+    margin: 10px 0;
+  }
+
+  .footer {
+    font-size: 10px;
+  }
+}
+
+.container {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1200px;
+  padding: 20px; /* Adjusted padding for compact view */
+  background: linear-gradient(135deg, #f9f9f9, #e2e2e2);
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+h1 {
+  color: #2c3e50;
+  font-size: 32px; /* Adjusted font size */
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+h2 {
+  color: #34495e;
+  font-size: 20px; /* Adjusted font size */
+  font-weight: 400;
+  margin-bottom: 15px; /* Reduced margin */
+}
+
+.details {
+  font-size: 16px; /* Reduced font size */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px; /* Reduced gap */
+  margin-top: 25px; /* Reduced margin */
+}
+
+.detail-item {
+  background: #ffffff;
+  padding: 15px; /* Reduced padding */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.detail-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.price, .count {
+  font-size: 18px; /* Adjusted font size */
+  font-weight: bold;
+  color: #2980b9;
+}
+
+.profit {
+  font-size: 18px; /* Adjusted font size */
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.loss {
+  font-size: 18px; /* Adjusted font size */
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.detail-item span {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.detail-item {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Jaiswal Banking Ltd</h1>
-        </div>
 
-        <div id="createAccount" class="form-section">
-            <h3>Create Account</h3>
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <label for="mobile">Mobile Number</label>
-                <input type="text" id="mobile" placeholder="Enter your mobile number">
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" id="address" placeholder="Enter your address">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Create a password">
-            </div>
-            <button class="btn" onclick="createAccount()">Create Account</button>
-            <div class="link">
-                <a href="#" onclick="showLogin()">Already have an account? Login</a>
-            </div>
-        </div>
+  <div class="container">
+  <h1>Intraday Candlestick Chart</h1>
+  <h2>Company: <strong>Marketism</strong></h2>
+  <div class="details">
+    <div class="detail-item">
+      <strong>Current Price:</strong> 
+      <span id="currentPrice" class="price">$200.00</span>
+    </div>
+    <div class="detail-item">
+      <strong>Purchased Price:</strong> 
+      <span id="purchasedPrice" class="price">--</span>
+    </div>
+    <div class="detail-item">
+      <strong>Shares Owned:</strong> 
+      <span id="shares" class="count">0</span>
+    </div>
+    <div class="detail-item">
+      <strong>Profit/Loss:</strong> 
+      <span id="profitLoss" class="profit">0.00</span>
+    </div>
+  </div>
+</div>
 
-        <div id="login" class="form-section" style="display: none;">
-            <h3>Login</h3>
-            <div class="form-group">
-                <label for="accountNumber">Account Number</label>
-                <input type="text" id="accountNumber" placeholder="Enter account number">
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter password">
-            </div>
-            <button class="btn" onclick="login()">Login</button>
-            <div class="link">
-                <a href="#" onclick="showCreateAccount()">Don't have an account? Create Account</a>
-            </div>
-        </div>
 
-        <div id="userInfo" class="form-section" style="display: none;">
-            <h3>Account Details</h3>
-            <p><strong>Account Number:</strong> <span id="infoAccountNumber"></span></p>
-            <p><strong>Name:</strong> <span id="infoName"></span></p>
-            <p><strong>Mobile:</strong> <span id="infoMobile"></span></p>
-            <p><strong>Address:</strong> <span id="infoAddress"></span></p>
-            <div class="option-bar">
-                <button onclick="performTransaction('deposit')">Deposit</button>
-                <button onclick="performTransaction('withdraw')">Withdraw</button>
-                <button onclick="performTransaction('loan')">Loan</button>
-                <button onclick="showPassbook()">View Passbook</button>
-                <button onclick="logout()">Logout</button>
-            </div>
-        </div>
-
-        <div id="transactions" class="form-section" style="display: none;">
-            <h3>Passbook</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Balance</th>
-                    </tr>
-                </thead>
-                <tbody id="transactionTable"></tbody>
-            </table>
-            <button class="btn" onclick="hidePassbook()">Back</button>
-        </div>
+    <!-- Scrollable Chart Container -->
+    <div class="chart-container">
+      <canvas id="candlestickChart" width="2000" height="400"></canvas>
     </div>
 
-    <script>
-        // Functions to switch between Create Account and Login views
-function showCreateAccount() {
-    document.getElementById('createAccount').style.display = 'block';
-    document.getElementById('login').style.display = 'none';
-}
+    <!-- Candlestick Info Display -->
+    <div id="candleInfo" class="candle-info">
+      <span>Open: $<span id="openPrice">--</span></span>
+      <span>High: $<span id="highPrice">--</span></span>
+      <span>Low: $<span id="lowPrice">--</span></span>
+      <span>Close: $<span id="closePrice">--</span></span>
+    </div>
 
-function showLogin() {
-    document.getElementById('createAccount').style.display = 'none';
-    document.getElementById('login').style.display = 'block';
-}
+    <div class="buttons">
+      <button class="button buy" onclick="buyShares()">Buy Shares</button>
+      <button class="button sell" onclick="sellShares()">Sell Shares</button>
+    </div>
+  </div>
 
-// Function to create a new account
-function createAccount() {
-    const name = document.getElementById('name').value;
-    const mobile = document.getElementById('mobile').value;
-    const address = document.getElementById('address').value;
-    const password = document.getElementById('password').value;
+  <div class="footer">
+    <p>&copy; 2024 Marketism - Stock Trading Simulation</p>
+  </div>
 
-    if (name && mobile && address && password) {
-        const accountNumber = 'AC' + Math.floor(100000 + Math.random() * 900000);
-        const accountData = {
-            name,
-            mobile,
-            address,
-            password,
-            balance: 0,
-            transactions: []
-        };
+  <script>
+    // Variables
+    const canvas = document.getElementById('candlestickChart');
+    const ctx = canvas.getContext('2d');
+    const currentPriceEl = document.getElementById('currentPrice');
+    const purchasedPriceEl = document.getElementById('purchasedPrice');
+    const sharesEl = document.getElementById('shares');
+    const profitLossEl = document.getElementById('profitLoss');
+    const openPriceEl = document.getElementById('openPrice');
+    const highPriceEl = document.getElementById('highPrice');
+    const lowPriceEl = document.getElementById('lowPrice');
+    const closePriceEl = document.getElementById('closePrice');
 
-        localStorage.setItem(accountNumber, JSON.stringify(accountData));
-        alert(`Account created successfully! Your Account Number is ${accountNumber}`);
-        showLogin();
-    } else {
-        alert('Please fill in all the fields.');
+    let candles = [];
+    let currentPrice = 200;
+    let purchasedPrice = null;
+    let shares = 0;
+    let profitLoss = 0;
+
+    const MAX_PRICE = 299;
+    const MIN_PRICE = 105;
+    const CANDLE_WIDTH = 20;
+    const MAX_CANDLES = 50; // Increased max candles to 50
+    let chartWidth = 0;
+
+    let hoverIndex = null;
+
+    // Generate a new candlestick
+    function generateCandle() {
+      const lastClose = candles.length ? candles[candles.length - 1].close : currentPrice;
+      const isProfit = Math.random() > 0.5;
+      const isBigCandle = Math.random() > 0.7;
+
+      const open = lastClose;
+      const high = Math.min(open + (isBigCandle ? Math.random() * 40 : Math.random() * 15), MAX_PRICE);
+      const low = Math.max(open - (isBigCandle ? Math.random() * 40 : Math.random() * 15), MIN_PRICE);
+      const close = isProfit
+        ? Math.min(open + Math.random() * (isBigCandle ? 30 : 10), MAX_PRICE)
+        : Math.max(open - Math.random() * (isBigCandle ? 30 : 10), MIN_PRICE);
+
+      currentPrice = close; // Update the current price
+      return { open, high, low, close };
     }
-}
 
-// Function to handle login
-function login() {
-    const accountNumber = document.getElementById('accountNumber').value;
-    const password = document.getElementById('loginPassword').value;
+    // Draw a single candle
+    function drawCandle(candle, index) {
+      const x = index * (CANDLE_WIDTH + 10);
+      const yOpen = scaleY(candle.open);
+      const yClose = scaleY(candle.close);
+      const yHigh = scaleY(candle.high);
+      const yLow = scaleY(candle.low);
 
-    const accountData = JSON.parse(localStorage.getItem(accountNumber));
-    if (accountData && accountData.password === password) {
-        document.getElementById('infoAccountNumber').innerText = accountNumber;
-        document.getElementById('infoName').innerText = accountData.name;
-        document.getElementById('infoMobile').innerText = accountData.mobile;
-        document.getElementById('infoAddress').innerText = accountData.address;
+      const isBullish = candle.close > candle.open;
 
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('userInfo').style.display = 'block';
-    } else {
-        alert('Invalid Account Number or Password.');
+      // Candle Wick (Line between High and Low)
+      ctx.beginPath();
+      ctx.strokeStyle = isBullish ? '#3b9d2e' : '#e94e77'; // Green for bullish, Red for bearish
+      ctx.lineWidth = 2;
+      ctx.moveTo(x + CANDLE_WIDTH / 2, yHigh);
+      ctx.lineTo(x + CANDLE_WIDTH / 2, yLow);
+      ctx.stroke();
+
+      // Candle Body with gradient for realism
+      const gradient = ctx.createLinearGradient(x, yOpen, x, yClose);
+      gradient.addColorStop(0, isBullish ? '#4CAF50' : '#f44336');
+      gradient.addColorStop(1, isBullish ? '#66bb6a' : '#e57373');
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(
+        x,
+        Math.min(yOpen, yClose),
+        CANDLE_WIDTH,
+        Math.abs(yClose - yOpen)
+      );
     }
-}
 
-// Function to log out
-function logout() {
-    document.getElementById('userInfo').style.display = 'none';
-    showLogin();
-}
-
-// Function to perform transactions
-function performTransaction(type) {
-    const accountNumber = document.getElementById('infoAccountNumber').innerText;
-    const amount = parseFloat(prompt(`Enter the amount to ${type}:`));
-
-    if (amount > 0) {
-        const accountData = JSON.parse(localStorage.getItem(accountNumber));
-
-        if (type === 'withdraw' && accountData.balance < amount) {
-            alert('Insufficient balance!');
-            return;
-        }
-
-        const date = new Date().toLocaleString();
-        let newBalance = accountData.balance;
-
-        if (type === 'deposit') {
-            newBalance += amount;
-        } else if (type === 'withdraw') {
-            newBalance -= amount;
-        } else if (type === 'loan') {
-            newBalance += amount; // Loans increase balance
-        }
-
-        accountData.balance = newBalance;
-        accountData.transactions.push({ date, type, amount, balance: newBalance });
-        localStorage.setItem(accountNumber, JSON.stringify(accountData));
-        alert(`${type.charAt(0).toUpperCase() + type.slice(1)} successful! New Balance: ₹${newBalance}`);
-    } else {
-        alert('Enter a valid amount.');
+    // Scale Y values for realistic chart
+    function scaleY(price) {
+      return canvas.height - ((price - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * canvas.height + 20;
     }
-}
 
-// Function to display the passbook
-function showPassbook() {
-    const accountNumber = document.getElementById('infoAccountNumber').innerText;
-    const accountData = JSON.parse(localStorage.getItem(accountNumber));
+    // Draw chart with realistic design
+    function drawChart() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const transactionTable = document.getElementById('transactionTable');
-    transactionTable.innerHTML = ''; // Clear previous data
+      // Draw Gridlines (for better readability)
+      drawGridLines();
 
-    accountData.transactions.forEach(transaction => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${transaction.date}</td>
-            <td>${transaction.type}</td>
-            <td>₹${transaction.amount}</td>
-            <td>₹${transaction.balance}</td>
-        `;
-        transactionTable.appendChild(row);
+      // Draw each candlestick
+      candles.forEach((candle, index) => drawCandle(candle, index));
+
+      // Show the most recent candlestick prices
+      if (candles.length) {
+        const latestCandle = candles[candles.length - 1];
+        openPriceEl.textContent = latestCandle.open.toFixed(2);
+        highPriceEl.textContent = latestCandle.high.toFixed(2);
+        lowPriceEl.textContent = latestCandle.low.toFixed(2);
+        closePriceEl.textContent = latestCandle.close.toFixed(2);
+      }
+
+      // Display hover info if hovering over a candle
+      if (hoverIndex !== null) {
+        const candle = candles[hoverIndex];
+        openPriceEl.textContent = candle.open.toFixed(2);
+        highPriceEl.textContent = candle.high.toFixed(2);
+        lowPriceEl.textContent = candle.low.toFixed(2);
+        closePriceEl.textContent = candle.close.toFixed(2);
+      }
+    }
+
+    // Draw gridlines for better readability
+    function drawGridLines() {
+      ctx.strokeStyle = '#e0e0e0';
+      ctx.lineWidth = 1;
+      
+      // Draw vertical gridlines
+      for (let i = 0; i < candles.length; i++) {
+        const x = i * (CANDLE_WIDTH + 10);
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      // Draw horizontal gridlines (Price levels)
+      const priceStep = (MAX_PRICE - MIN_PRICE) / 5;
+      for (let i = 0; i <= 5; i++) {
+        const y = scaleY(MIN_PRICE + priceStep * i);
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Update chart data and display
+    function updateChart() {
+      candles.push(generateCandle());
+      if (candles.length > MAX_CANDLES) candles.shift(); // Keep only the recent candles
+
+      chartWidth = candles.length * (CANDLE_WIDTH + 10); // Adjust chart width based on the number of candles
+      canvas.width = chartWidth; // Dynamically update canvas width
+
+      drawChart();
+      currentPriceEl.textContent = currentPrice.toFixed(2);
+    }
+
+    // Automatically scroll the chart to the right
+    function autoScroll() {
+      const scrollWidth = canvas.width - document.querySelector('.chart-container').offsetWidth;
+      document.querySelector('.chart-container').scrollLeft = scrollWidth;
+    }
+
+    // Change background color every 2 seconds to simulate market conditions
+    function changeBackgroundColor() {
+      const colors = ['#f1f8e9', '#ffe0e0', '#e1f5fe', '#fff3e0'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      document.body.style.backgroundColor = randomColor;
+    }
+
+    // Buy shares function
+    function buyShares() {
+      const shareAmount = parseInt(prompt("Enter the number of shares to buy:", "10"));
+      if (isNaN(shareAmount) || shareAmount <= 0) return alert("Invalid amount!");
+
+      purchasedPrice = currentPrice;
+      shares += shareAmount;
+      purchasedPriceEl.textContent = purchasedPrice.toFixed(2);
+      sharesEl.textContent = shares;
+      updateProfitLoss();
+    }
+
+    // Sell shares function
+    function sellShares() {
+      if (shares <= 0) return alert("You have no shares to sell!");
+
+      const shareAmount = parseInt(prompt("Enter the number of shares to sell:", "10"));
+      if (isNaN(shareAmount) || shareAmount <= 0 || shareAmount > shares) return alert("Invalid amount!");
+
+      shares -= shareAmount;
+      profitLoss += (currentPrice - purchasedPrice) * shareAmount;
+      sharesEl.textContent = shares;
+      updateProfitLoss();
+    }
+
+    // Update profit/loss display
+    function updateProfitLoss() {
+      profitLossEl.textContent = profitLoss.toFixed(2);
+      profitLossEl.className = profitLoss >= 0 ? 'profit' : 'loss';
+    }
+
+    // Start chart animation with background change every 2 seconds and 2 seconds per candle
+    function startChart() {
+      setInterval(updateChart, 2000);  // New candle every 2 seconds
+      setInterval(autoScroll, 2000);   // Auto scroll every 2 seconds
+      setInterval(changeBackgroundColor, 2000);  // Change background every 2 seconds
+    }
+
+    // Hover event to show candle data
+    canvas.addEventListener('mousemove', (event) => {
+      const xPos = event.offsetX;
+      const candleIndex = Math.floor(xPos / (CANDLE_WIDTH + 10));
+      
+      if (candleIndex >= 0 && candleIndex < candles.length) {
+        hoverIndex = candleIndex;
+      } else {
+        hoverIndex = null;
+      }
+      
+      drawChart(); // Redraw the chart with the updated hover index
     });
 
-    document.getElementById('userInfo').style.display = 'none';
-    document.getElementById('transactions').style.display = 'block';
-}
+    // Start the animation and chart
+    startChart();
+  </script>
 
-// Function to hide the passbook
-function hidePassbook() {
-    document.getElementById('transactions').style.display = 'none';
-    document.getElementById('userInfo').style.display = 'block';
-}
-
-    </script>
 </body>
 </html>
